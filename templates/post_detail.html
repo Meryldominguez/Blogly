@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User index</title>
+</head>
+<body>
+    <h1>{{post.post_title}}</h1>
+    <p>{{post.post_content}}</p>
+<br>
+    <p>
+        By {{ post.author.get_full_name() }} 
+        <br>
+        (Created: {{post.created_at}})
+    </p>
+<form action="/users/{{post.author.id}}" method="GET">
+    <input type="submit" value="See Author page" id="editbtn"/>
+</form>
+<form action="/posts/{{post.id}}/edit" method="GET">
+    <input type="submit" value="Edit post" id="editbtn"/>
+</form>
+<form action="/posts/{{post.id}}/delete" method="POST">
+    <input type="submit" value="Delete Post" id="deletebtn"/>
+</form>
+
+</body>
+</html>
+
+
