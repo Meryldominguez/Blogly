@@ -15,7 +15,8 @@ a = User(first_name="Test1", last_name="User1")
 b = User(first_name="Test2", last_name="User2")
 c = User(first_name="Test3", last_name="User3")
 d = User(first_name="Test4", last_name="User4")
-
+e = User(first_name="Test5", last_name="User5")
+f = User(first_name="Test6", last_name="User6")
 
 # Add new objects to session, so they'll persist
 db.session.add_all([a,b,c,d])

@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
-{% title block %} Posts tagged {{ tag.name }}{% endblock%}
-{% content block %}
+{% block title %} 
+Posts tagged {{ tag.name }}
+{% endblock %}
+
+
+{% block content %}
     <h1>{{ tag.name }}</h1>
     
         {% if tag.posts %}

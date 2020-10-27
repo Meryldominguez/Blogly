@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 
-{% title block %} {{ post.author.get_full_name() }}'s Post{% endblock%}
-{% content block %}
+{% block title %} 
+{{ post.author.full_name }}'s Post
+{% endblock %}
+
+{% block content %}
     <h1>{{post.post_title}}</h1>
     <p>{{post.post_content}}</p>
 <br>
@@ -13,7 +16,7 @@
     {% endfor %}
 </div>
     <p>
-        By {{ post.author.get_full_name() }} 
+        By {{ post.author.full_name }} 
         <br>
         (Created: {{post.created_at}})
     </p>

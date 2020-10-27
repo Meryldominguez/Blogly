@@ -60,7 +60,7 @@ def show_user_edit(user_id):
     elif request.method == "POST":
         first_name = request.form['first_name']
         last_name = request.form['last_name']
-        if not request.form['image_url']:
+        if not request.form['image_url'] or request.form['image_url']== "None":
             image_url = "https://picsum.photos/200"
         else:
             image_url = request.form['image_url']

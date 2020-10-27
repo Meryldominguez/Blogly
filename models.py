@@ -24,8 +24,10 @@ class User(db.Model):
 
     posts= db.relationship('Post', backref="author")
 
-    def get_full_name(self):
+    @property
+    def full_name(self):
         return self.first_name+" "+self.last_name
+
 
 class Post(db.Model):
     """Post class for db entry in posts table"""

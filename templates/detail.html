@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 
-{% title block %} {{ user.get_full_name() }}'s Profile{% endblock%}
-{% content block %}
-    <h1>{{ user.get_full_name() }}</h1>
+{% block title %}
+{{ user.full_name }}'s Profile
+{% endblock %}
+
+{% block content %}
+    <h1>{{ user.full_name }}</h1>
     {% if user.image_url %}
     <img id="profile" src="{{ user.image_url }}">
     {% else %}
@@ -18,12 +21,13 @@
                 <li> 
                     <a href="/posts/{{post.id}}">
                         {{post.post_title}}
+
                         {% for tag in post.tags%}
                         <a href="/tags/{{tag.id}}">{{tag.name}}</a>
-                        {% end for %}
+                        {% endfor %}
                     </a>
                 </li>
-                {% endfor%}
+                {% endfor %}
             </ul>
         {% else %}
         <h2>This account has no posts</h2>
