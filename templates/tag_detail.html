@@ -6,7 +6,7 @@ Posts tagged {{ tag.name }}
 
 
 {% block content %}
-    <h1>{{ tag.name }}</h1>
+    <h1>Posts tagged : {{ tag.name }}</h1>
     
         {% if tag.posts %}
             <ul>
@@ -22,8 +22,11 @@ Posts tagged {{ tag.name }}
         <h2>There are no posts with this tag</h2>
         {% endif %}
         
-<form action="/users" method="get">
+<form action="/tags" method="get">
     <input type="submit" value="Go back" id="back"/>
+</form>
+<form action="/tags/{{tag.id}}/delete" method="post">
+    <input type="submit" value="Delete this tag" id="back"/>
 </form>
 {% endblock %}
 
