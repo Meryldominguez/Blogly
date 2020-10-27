@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from app import app
-from models import db, User, Post
+from models import db, User, Post, Tag, PostTag
 
 # Use test database and don't clutter tests with SQL
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly_test'
@@ -16,9 +16,10 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 db.drop_all()
 db.create_all()
+db.session.rollback()
 
 
-class UsersViewsTestCase(TestCase):
+class BloglyViewsTestCase(TestCase):
     """Tests for Users."""
 
     def setUp(self):
@@ -31,8 +32,12 @@ class UsersViewsTestCase(TestCase):
         db.session.add(user)
         db.session.commit()
 
+        tag = Tag(name="TestTag")
+        db.session.add(tag)
+        db.session.commit()
+
         user= User.query.one()
-        post = Post(post_title="Testuser Wrote this thing" , post_content="They wrote something here too", author= user)
+        post = Post(post_title="Testuser Wrote this thing" , post_content="They wrote something here too", author= user, tags=[tag])
 
         db.session.add(post)
         db.session.commit()
@@ -91,7 +96,7 @@ class UsersViewsTestCase(TestCase):
             user = User.query.one()
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
-            self.assertIn(f"<h1>Edit User {user.get_full_name()}</h1>", html)
+            self.assertIn(f"<h1>Edit User {user.full_name}</h1>", html)
 
     def test_edit_user(self):
         with app.test_client() as client:
@@ -126,7 +131,7 @@ class UsersViewsTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)   
             self.assertEqual(postcount, 2)   
             self.assertIn(f"{post2.post_title}", html)        
-            self.assertIn(f"{post2.author.get_full_name()}", html) 
+            self.assertIn(f"{post2.author.full_name}", html) 
 
     def test_edit_post(self):
         with app.test_client() as client:
@@ -140,7 +145,7 @@ class UsersViewsTestCase(TestCase):
             post = Post.query.one()
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
-            self.assertIn(f"{post.author.get_full_name()}", html)
+            self.assertIn(f"{post.author.full_name}", html)
             
     def test_delete_post(self):
         with app.test_client() as client:
@@ -153,4 +158,35 @@ class UsersViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
             self.assertEqual(postcount, 0)
+    def test_tags_view(self):
+        with app.test_client() as client:
+            tags= Tag.query.one()
+            post = Post.query.one()
 
+            resp= client.get(f"/tags",follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn(f"{tags.name}", html)
+    def test_tags_detail(self):
+        with app.test_client() as client:
+            tags= Tag.query.one()
+            post = Post.query.one()
+
+            resp= client.get(f"/tags/{tags.id}",follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn(f"{tags.name}", html)
+            self.assertIn(f"{post.post_name}", html)
+        
+    def test_new_tags(self):
+        with app.test_client() as client:
+            formdata = {'name':"test2"}
+            
+            resp= client.post(f"/tags/new", data=formdata, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+
+            tagcount = Tag.query.count()
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn(f"{tagcount[0].name}", html)
+            self.assertIn(f"{tagcount[1].name}", html)
+            self.assertEqual(tagcount, 2)
