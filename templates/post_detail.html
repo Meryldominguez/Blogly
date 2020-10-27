@@ -19,14 +19,19 @@
         <a href="/tags/{{tag.id}}">{{tag.name}}</a>
         {% endfor %}
     </p>
-<form action="/users/{{post.author.id}}" method="GET">
-    <input type="submit" value="See Author page" id="editbtn"/>
-</form>
+
 <form action="/posts/{{post.id}}/edit" method="GET">
     <input type="submit" value="Edit post" id="editbtn"/>
 </form>
 <form action="/posts/{{post.id}}/delete" method="POST">
     <input type="submit" value="Delete Post" id="deletebtn"/>
 </form>
+<form action="/users/{{post.author.id}}" method="GET">
+    <input type="submit" value="See Author page" id="editbtn"/>
+</form>
+<form action="/users" method="GET">
+    <input type="submit" value="Home" id="editbtn"/>
+</form>
 {% endblock %}
+
 
