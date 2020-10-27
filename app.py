@@ -2,7 +2,7 @@
 
 from flask import Flask, request, redirect, render_template
 from flask_sqlalchemy import SQLAlchemy
-from models import db, connect_db, User, Post
+from models import db, connect_db, User, Post, Tag, PostTag
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
@@ -110,12 +110,19 @@ def edit_posts(post_id):
     """Show and handle editing for posts."""
     if request.method =="GET":
         post = Post.query.get_or_404(post_id)
-        return render_template("edit_post.html", post=post)
+        alltags = Tag.query.order_by(Tag.name.desc())
+        return render_template("edit_post.html", post=post, tags=alltags)
     elif request.method == "POST":
         post = Post.query.get_or_404(post_id)
         post.post_title = request.form['post_title']
         post.post_content = request.form['post_content']
-    
+        
+        # post.tags= []
+        # for tag in request.form.getlist('tag_name'):
+        #     edit_tag = Tag(name=tag)
+        #     post.tags.append(edit_tag)
+        post.tags = []
+        post.tags.append(request.form.getlist('tag_name'))
         db.session.add(post)
         db.session.commit()
         request.status_code = 200
@@ -133,22 +140,22 @@ def delete_posts(post_id):
 @app.route("/tags")
 def view_tags():
     """delete posts."""
-    tags = Tag.query.order_by(Tag.name)
+    tags = Tag.query.all()
 
-    return render_template("TAGLIST NOTMADE", tags=tags)
+    return render_template("tag_list.html", tags=tags)
 
 @app.route("/tags/int:<tag_id>")
 def show_tag_detail(tag_id):
     """delete posts."""
     tag = Tag.query.get_or_404(tag_id)
 
-    return render_template("TAGLISTTEMPLATENOTMADE", tag=tag)
+    return render_template("tag_detail.html", tag=tag)
 
 @app.route("/tags/new", methods=["GET","POST"])
 def new_tags():
     """delete posts."""
     if request.method =="GET":
-        return render_template("NEWTAGFORM")
+        return render_template("new_tag.html")
     elif request.method == "POST":
         tag = Tag(name=request.form['tag_name']) 
         db.session.add(tag)

@@ -23,11 +23,17 @@ User Profiles
   <li>
     <a href="/posts/{{ post.id }}">
     {{ post.post_title }}
+
+    <li class="tagli">
     {% for tag in post.tags%}
       <a href="/tags/{{tag.id}}">{{tag.name}}</a>
     {% endfor %}
+    </li>
+
     </a>
   </li>
+
+  
   {% endfor %}
   {% else %}
     <h2>There are no posts! Write something?</h2>
