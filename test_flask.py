@@ -91,7 +91,7 @@ class UsersViewsTestCase(TestCase):
             user = User.query.one()
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
-            self.assertIn(f"<h1>Edit User {user.get_full_name()}</h1>", html)
+            self.assertIn(f"<h1>Edit User {user.full_name}</h1>", html)
 
     def test_edit_user(self):
         with app.test_client() as client:
@@ -126,7 +126,7 @@ class UsersViewsTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)   
             self.assertEqual(postcount, 2)   
             self.assertIn(f"{post2.post_title}", html)        
-            self.assertIn(f"{post2.author.get_full_name()}", html) 
+            self.assertIn(f"{post2.author.full_name}", html) 
 
     def test_edit_post(self):
         with app.test_client() as client:
@@ -140,7 +140,7 @@ class UsersViewsTestCase(TestCase):
             post = Post.query.one()
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
-            self.assertIn(f"{post.author.get_full_name()}", html)
+            self.assertIn(f"{post.author.full_name}", html)
             
     def test_delete_post(self):
         with app.test_client() as client:
