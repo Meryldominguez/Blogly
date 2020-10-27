@@ -28,12 +28,7 @@ def list_users():
 
     users = User.query.order_by(User.last_name,User.first_name)
     posts = Post.query.order_by(Post.id.desc()).limit(5)
-    # tags = PostTag.query.group_by(Tag.name)
-    
-
-    return render_template("list.html", posts=posts,users=users, 
-    # tags=tags
-    )
+    return render_template("list.html", posts=posts,users=users)
 
 @app.route("/users/new", methods=["GET","POST"])
 def add_user():
@@ -125,7 +120,6 @@ def edit_posts(post_id):
         
         tag_ids = [int(num) for num in request.form.getlist("tag_id")]
         post.tags = Tag.query.filter(Tag.id.in_(tag_ids)).all()
-
         db.session.add(post)
         db.session.commit()
         request.status_code = 200
@@ -144,9 +138,10 @@ def delete_posts(post_id):
 def view_tags():
     """delete posts."""
     tags = Tag.query.all()
+
     return render_template("tag_list.html", tags=tags)
 
-@app.route("/tags/<int:tag_id>")
+@app.route("/tags/int:<tag_id>")
 def show_tag_detail(tag_id):
     """delete posts."""
     tag = Tag.query.get_or_404(tag_id)
@@ -177,7 +172,7 @@ def edit_tag(tag_id):
         request.status_code = 200
         return redirect(f"/tags")
 
-@app.route("/tags/<int:tag_id>/delete", methods=["POST"])
+@app.route("/tags/int:<tag_id>/delete")
 def delete_tag(tag_id):
     """delete posts."""
     tag = Tag.query.get_or_404(tag_id)
