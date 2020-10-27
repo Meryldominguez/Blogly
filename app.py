@@ -83,9 +83,6 @@ def delete_user(user_id):
     request.status_code = 200
     return redirect("/users")
 
-    
-
-
 @app.route("/users/<int:user_id>/posts/new", methods=["GET","POST"])
 def new_posts(user_id):
     """Show and submit new post form."""
@@ -132,3 +129,50 @@ def delete_posts(post_id):
     db.session.delete(post)
     db.session.commit()
     return redirect(f"/users/{user}")
+
+@app.route("/tags")
+def view_tags():
+    """delete posts."""
+    tags = Tag.query.order_by(Tag.name)
+
+    return render_template("TAGLIST NOTMADE", tags=tags)
+
+@app.route("/tags/int:<tag_id>")
+def show_tag_detail(tag_id):
+    """delete posts."""
+    tag = Tag.query.get_or_404(tag_id)
+
+    return render_template("TAGLISTTEMPLATENOTMADE", tag=tag)
+
+@app.route("/tags/new", methods=["GET","POST"])
+def new_tags():
+    """delete posts."""
+    if request.method =="GET":
+        return render_template("NEWTAGFORM")
+    elif request.method == "POST":
+        tag = Tag(name=request.form['tag_name']) 
+        db.session.add(tag)
+        db.session.commit()
+        request.status_code = 200
+        return redirect(f"/tags")
+
+@app.route("/tags/int:<tag_id>/edit", methods=["GET","POST"])
+def edit_tag(tag_id):
+    """delete posts."""
+    if request.method =="GET":
+        return render_template("NEWTAGFORM")
+    elif request.method == "POST":
+        tag = Tag(name=request.form['tag_name']) 
+        db.session.add(tag)
+        db.session.commit()
+        request.status_code = 200
+        return redirect(f"/tags")
+
+@app.route("/tags/int:<tag_id>/delete")
+def delete_tag(tag_id):
+    """delete posts."""
+    tag = Tag.query.get_or_404(tag_id)
+    db.session.delete(tag)
+    db.session.commit()
+    request.status_code = 200
+    return redirect(f"/tags")

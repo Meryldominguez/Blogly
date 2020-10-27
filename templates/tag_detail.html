@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% title block %} Posts tagged {{ tag.name }}{% endblock%}
+{% content block %}
+    <h1>{{ tag.name }}</h1>
+    
+        {% if tag.posts %}
+            <ul>
+                {% for post in tag.posts %}
+                <li> 
+                    <a href="/posts/{{post.id}}">
+                        {{post.post_title}}
+                    </a>
+                </li>
+                {% endfor%}
+            </ul>
+        {% else %}
+        <h2>There are no posts with this tag</h2>
+        {% endif %}
+        
+<form action="/users" method="get">
+    <input type="submit" value="Go back" id="back"/>
+</form>
+{% endblock %}
+
+

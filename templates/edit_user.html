@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% title block %} Edit {{ user.get_full_name() }}'s Profile{% endblock%}
+
+{% content block %}
   <h1>Edit User {{user.get_full_name()}}</h1>
 <form method="POST">
   <p>First Name:<input name="first_name" value="{{user.first_name}}"></p>
@@ -13,6 +10,4 @@
   <p>Photo:<input name="image_url" value="{{user.first_name}}"></p>
   <button>Save</button>
 </form>
-
-</body>
-</html>
+{% endblock %}
