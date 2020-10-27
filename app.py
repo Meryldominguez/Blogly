@@ -117,12 +117,11 @@ def edit_posts(post_id):
         post.post_title = request.form['post_title']
         post.post_content = request.form['post_content']
         
-        # post.tags= []
-        # for tag in request.form.getlist('tag_name'):
-        #     edit_tag = Tag(name=tag)
-        #     post.tags.append(edit_tag)
-        post.tags = []
-        post.tags.append(request.form.getlist('tag_name'))
+        post.tags= []
+        for tag_id in request.form.getlist('tag_id'):
+            tag = Tag.query.get(tag_id)
+            post.tags.append(tag)
+        
         db.session.add(post)
         db.session.commit()
         request.status_code = 200

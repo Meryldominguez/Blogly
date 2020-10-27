@@ -14,12 +14,12 @@ Edit Post
       {% for tag in tags %}
         {% if tag in post.tags%}
           <li>
-            <input type="checkbox" name="tag_name"value="{{tag.name}}" id="" checked>
+            <input type="checkbox" name="tag_id" value="{{tag.id}}" checked>
           <label for="tag_name">{{tag.name}}</label>
           </li>
         {% else %}
           <li>
-            <input type="checkbox" name="{{tag.name}}" id="" >
+            <input type="checkbox" name="tag_id" value="{{tag.id}}" >
           <label for="{{tag.name}}">{{tag.name}}</label>
           </li>
         {% endif %}
