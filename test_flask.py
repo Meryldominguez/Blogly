@@ -26,7 +26,8 @@ class BloglyViewsTestCase(TestCase):
         """Add sample user."""
         User.query.delete()
         Post.query.delete()
-        
+        Tag.query.delete()
+        PostTag.query.delete()
         
 
         user = User(first_name="Testuser",last_name="Usertest", image_url="www.lorempicsum.com/100")
@@ -40,16 +41,12 @@ class BloglyViewsTestCase(TestCase):
         db.session.commit()
 
         user= User.query.one()
-        post = Post(post_title="Testuser Wrote this thing" , post_content="They wrote something here too", author= user)
+        post = Post(post_title="Testuser Wrote this thing" , post_content="They wrote something here too", author= user, tags=[tag1,tag2,tag3])
 
         db.session.add(post)
         db.session.commit()
 
-        # posttag = PostTag(post_id=post.id, tag_id=tag1.id)
-
-        # db.session.add(posttag)
-        # db.session.commit()
-
+    
 
         self.user_id = user.id
     
@@ -57,6 +54,8 @@ class BloglyViewsTestCase(TestCase):
         """Clean up any fouled transaction."""
 
         db.session.rollback()
+        db.drop_all()
+        db.create_all()
 
     def test_home(self):
         with app.test_client() as client:
@@ -167,36 +166,39 @@ class BloglyViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
             self.assertEqual(postcount, 0)
-    # def test_tags_view(self):
-    #     with app.test_client() as client:
-    #         tags= Tag.query.one()
-    #         post = Post.query.one()
 
-    #         resp= client.get(f"/tags",follow_redirects=True)
-    #         html = resp.get_data(as_text=True)
-    #         self.assertEqual(resp.status_code, 200)
-    #         self.assertIn(f"{tags.name}", html)
 
-    # def test_tags_detail(self):
-    #     with app.test_client() as client:
-    #         tags= Tag.query.one()
-    #         post = Post.query.one()
+    def test_tags_view(self):
+        with app.test_client() as client:
+            tags= Tag.query.first()
+            post = Post.query.one()
 
-    #         resp= client.get(f"/tags/{tags.id}",follow_redirects=True)
-    #         html = resp.get_data(as_text=True)
-    #         self.assertEqual(resp.status_code, 200)
-    #         self.assertIn(f"{tags.name}", html)
-    #         self.assertIn(f"{post.post_name}", html)
+            resp= client.get(f"/tags",follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn(f"{tags.name}", html)
+
+    def test_tags_detail(self):
+        with app.test_client() as client:
+            post = Post.query.one()
+            tags = post.tags[0]
+
+            resp= client.get(f"/tags/{tags.id}",follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn(f"{tags.name}", html)
+            self.assertIn(f"{post.post_title}", html)
         
-    # def test_new_tags(self):
-    #     with app.test_client() as client:
-    #         formdata = {'name':"test2"}
+    def test_new_tags(self):
+        with app.test_client() as client:
+            formdata = {'tag_name':'test2'}
             
-    #         resp= client.post(f"/tags/new", data=formdata, follow_redirects=True)
-    #         html = resp.get_data(as_text=True)
+            resp= client.post(f"/tags/new", data=formdata, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            tagcount = Tag.query.count()
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(tagcount, 4)
 
-    #         tagcount = Tag.query.count()
-    #         self.assertEqual(resp.status_code, 200)
-    #         self.assertIn(f"{tagcount[0].name}", html)
-    #         self.assertIn(f"{tagcount[1].name}", html)
-    #         self.assertEqual(tagcount, 2)
+            for tag in Tag.query.all():
+                self.assertIn(f"{tag.name}", html)

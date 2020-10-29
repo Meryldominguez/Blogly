@@ -7,11 +7,6 @@ def now():
 
 db = SQLAlchemy()
 
-def connect_db(app):
-    """Connect to database."""
-    db.app = app
-    db.init_app(app)
-
 
 class User(db.Model):
     """Accounts per user of blogly app"""
@@ -22,7 +17,7 @@ class User(db.Model):
     last_name = db.Column(db.String(20), nullable=False)
     image_url = db.Column(db.String, nullable=True)
 
-    posts= db.relationship('Post', backref="author")
+    posts= db.relationship('Post', backref="author",cascade="all, delete-orphan")
 
     @property
     def full_name(self):
@@ -44,8 +39,10 @@ class PostTag(db.Model):
     __tablename__ = "post_tags"
 
     post_id = db.Column(db.Integer,db.ForeignKey('posts.id'), primary_key=True)
+    
 
     tag_id= db.Column(db.Integer, db.ForeignKey('tags.id'), primary_key=True)
+    
 
 
 class Tag(db.Model):
@@ -54,9 +51,13 @@ class Tag(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(20), nullable=False)
-    posts = db.relationship('Post',secondary='post_tags', backref='tags', cascade="all, delete-orphan")
+    posts = db.relationship('Post',secondary='post_tags', backref='tags')
 
     
 
 
 
+def connect_db(app):
+    """Connect to database."""
+    db.app = app
+    db.init_app(app)
